@@ -193,24 +193,3 @@ instance HasElmDecoder Aeson.Value SingleFieldRecord
 instance HasElmEncoder Aeson.Value SingleFieldRecord
 
 Aeson.deriveJSON Aeson.defaultOptions ''SingleFieldRecord
-
--- data SingleFieldRecord = SingleFieldRecord { _singleField :: Int }
---   deriving (GHC.Generic)
-
--- instance SOP.Generic SingleFieldRecord
--- instance HasDatatypeInfo SingleFieldRecord
-
--- instance Aeson.ToJSON SingleFieldRecord where
---   toEncoding = Aeson.genericToEncoding Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1, Aeson.unwrapUnaryRecords = False }
---   toJSON = Aeson.genericToJSON Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1, Aeson.unwrapUnaryRecords = False }
-
--- instance HasElmDefinition SingleFieldRecord where
---   elmDefinition = deriveElmTypeDefinition @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } "SingleFieldRecord.SingleFieldRecord"
-
--- instance HasElmDecoderDefinition Aeson.Value SingleFieldRecord where
---   elmDecoderDefinition = deriveElmJSONDecoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1, Aeson.unwrapUnaryRecords = False } "SingleFieldRecord.decode"
-
--- instance HasElmEncoderDefinition Aeson.Value SingleFieldRecord where
---   elmEncoderDefinition = deriveElmJSONEncoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1, Aeson.unwrapUnaryRecords = False } "SingleFieldRecord.encode"
-
--- instance HasElmType SingleFieldRecord where
