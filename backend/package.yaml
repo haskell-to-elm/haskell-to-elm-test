@@ -20,7 +20,15 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/folq/haskell-to-elm-test/backend#readme>
 
 dependencies:
+- aeson
 - base >= 4.7 && < 5
+- elm-syntax
+- haskell-to-elm
+- servant
+- servant-elm
+- servant-elm-bidirectional
+- servant-foreign-bidirectional
+- servant-server
 
 library:
   source-dirs: src
