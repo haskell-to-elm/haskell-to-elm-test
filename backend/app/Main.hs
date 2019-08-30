@@ -1,4 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Main where
 
 import Protolude
@@ -10,7 +11,8 @@ import Servant.Server
 import API
 
 main :: IO ()
-main =
+main = do
+  putText "Starting server on port 8081"
   run 8081 $ serve (Proxy :: Proxy API) server
 
 server :: Server API
