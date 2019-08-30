@@ -36,6 +36,7 @@ _exe-ghc-options: &exe-ghc-options
   - -with-rtsopts=-N
 
 dependencies:
+- QuickCheck
 - aeson
 - base >= 4.7 && < 5
 - directory

@@ -9,6 +9,7 @@ import Network.Wai.Middleware.Cors
 import Network.Wai.Middleware.RequestLogger
 import Servant.API
 import Servant.Server
+import qualified Test.QuickCheck as QuickCheck
 
 import API
 
@@ -26,5 +27,13 @@ main = do
 
 server :: Server API
 server =
-  return 41
+  arbitrary
   :<|> pure
+
+
+arbitrary :: (MonadIO m, QuickCheck.Arbitrary a) => m [a]
+arbitrary = 
+  liftIO $
+    QuickCheck.generate $
+    sequence
+      [ QuickCheck.resize n QuickCheck.arbitrary | n <- [0..100] ]

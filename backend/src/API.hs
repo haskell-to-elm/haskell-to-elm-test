@@ -10,5 +10,5 @@ import Servant.API
 type RoundTrip a = ReqBody '[JSON] a :> Post '[JSON] a
 
 type API
-    = "arbitrary" :> "int" :> Get '[JSON] Int
+    = "arbitrary" :> "ints" :> Get '[JSON] [Int]
     :<|> "roundtrip" :> "int" :> RoundTrip Int

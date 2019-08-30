@@ -6,18 +6,8 @@ import Element exposing (..)
 import Element.Background as Background
 import Http
 import RemoteData exposing (RemoteData)
-
-
-type alias ErrorWithMetadata =
-    ( Http.Error, Maybe { metadata : Http.Metadata, body : String } )
-
-
-type alias WebData a =
-    RemoteData ErrorWithMetadata a
-
-
-type alias WebResult a =
-    Result ErrorWithMetadata a
+import Roundtrip
+import WebData exposing (..)
 
 
 
@@ -25,15 +15,23 @@ type alias WebResult a =
 
 
 type alias Model =
-    { roundtripIntProgress : WebData Int
+    { roundtripInt : Roundtrip.Model Int
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { roundtripIntProgress = RemoteData.Loading }
+    let
+        ( roundtripInt, roundtripIntCmd ) =
+            Roundtrip.init
+                { name = "roundtripInt"
+                , arbitrary = Api.getArbitraryInts
+                , roundtrip = Api.postRoundtripInt
+                }
+    in
+    ( { roundtripInt = roundtripInt }
     , Cmd.batch
-        [ Cmd.map GotRoundtripIntResponse <| Api.postRoundtripInt 41
+        [ Cmd.map GotRoundtripIntMsg roundtripIntCmd
         ]
     )
 
@@ -43,14 +41,18 @@ init =
 
 
 type Msg
-    = GotRoundtripIntResponse (WebResult Int)
+    = GotRoundtripIntMsg (Roundtrip.Msg Int)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GotRoundtripIntResponse result ->
-            ( { model | roundtripIntProgress = RemoteData.fromResult result }, Cmd.none )
+        GotRoundtripIntMsg subMsg ->
+            let
+                ( roundtripInt, roundtripIntCmd ) =
+                    Roundtrip.update subMsg model.roundtripInt
+            in
+            ( { model | roundtripInt = roundtripInt }, Cmd.map GotRoundtripIntMsg roundtripIntCmd )
 
 
 
@@ -60,33 +62,8 @@ update msg model =
 view : Model -> Element Msg
 view model =
     column [ width fill, padding 30 ]
-        [ el
-            [ paddingXY 20 10
-            , Background.color <| remoteDataColor model.roundtripIntProgress 41
-            ]
-          <|
-            text "postRoundtripInt"
+        [ Roundtrip.view model.roundtripInt
         ]
-
-
-remoteDataColor : RemoteData e a -> a -> Color
-remoteDataColor data expected =
-    case data of
-        RemoteData.NotAsked ->
-            rgb 1 1 1
-
-        RemoteData.Loading ->
-            rgb 1 1 0.5
-
-        RemoteData.Success actual ->
-            if expected == actual then
-                rgb 0.5 1 0.5
-
-            else
-                rgb 1 0.5 0.5
-
-        RemoteData.Failure _ ->
-            rgb 1 0.5 0.5
 
 
 
