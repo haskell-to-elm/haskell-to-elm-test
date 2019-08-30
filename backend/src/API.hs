@@ -48,10 +48,10 @@ type ServantFeatureAPI
     = "header" :> Header "header" Text :> QueryFlag "flag" :> Get '[JSON] Int
  :<|> "strictheader" :> Header' '[Required, Strict] "requiredHeader" Text :> QueryFlag "flag" :> Get '[JSON] Int
  :<|> "twoheaders" :> Header "optionalHeader" Text :> Header' '[Required, Strict] "requiredHeader" Text :> QueryFlag "flag" :> Get '[JSON] Int
- :<|> "paramandbody" :> QueryParam "param" Int :> ReqBody '[JSON] [Text] :> Post '[JSON] NoContent
- :<|> "requiredparamandbody" :> QueryParam' '[Required, Strict] "param" Int :> ReqBody '[JSON] [Text] :> Post '[JSON] NoContent
- :<|> "paramsandbody" :> QueryParams "params" Int :> ReqBody '[JSON] Text :> Put '[JSON] NoContent
- :<|> "capture" :> Capture "id" Int :> Delete '[JSON] NoContent
+ :<|> "paramandbody" :> QueryParam "param" Int :> ReqBody '[JSON] [Text] :> PostNoContent '[JSON] NoContent
+ :<|> "requiredparamandbody" :> QueryParam' '[Required, Strict] "param" Int :> ReqBody '[JSON] [Text] :> PostNoContent '[JSON] NoContent
+ :<|> "paramsandbody" :> QueryParams "params" Int :> ReqBody '[JSON] Text :> PutNoContent '[JSON] NoContent
+ :<|> "capture" :> Capture "id" Int :> DeleteNoContent '[JSON] NoContent
  :<|> "captures" :> CaptureAll "ids" Int :> Get '[JSON] [Int]
  :<|> "static" :> "url" :> Get '[JSON] [Int]
 
