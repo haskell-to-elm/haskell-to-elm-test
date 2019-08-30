@@ -38,7 +38,9 @@ _exe-ghc-options: &exe-ghc-options
 dependencies:
 - aeson
 - base >= 4.7 && < 5
+- directory
 - elm-syntax
+- filepath
 - haskell-to-elm
 - protolude
 - servant
@@ -46,6 +48,8 @@ dependencies:
 - servant-elm-bidirectional
 - servant-foreign-bidirectional
 - servant-server
+- text
+- unordered-containers
 - warp
 
 library:
