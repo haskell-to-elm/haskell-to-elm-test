@@ -30,6 +30,11 @@ ghc-options:
   - -Wredundant-constraints
   - -Wtabs
 
+_exe-ghc-options: &exe-ghc-options
+  - -threaded
+  - -rtsopts
+  - -with-rtsopts=-N
+
 dependencies:
 - aeson
 - base >= 4.7 && < 5
@@ -50,10 +55,14 @@ executables:
   backend-exe:
     main:                Main.hs
     source-dirs:         app
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+    ghc-options:         *exe-ghc-options
+    dependencies:
+    - backend
+
+  elm-generator:
+    main:                Main.hs
+    source-dirs:         elm-generator
+    ghc-options:         *exe-ghc-options
     dependencies:
     - backend
 
