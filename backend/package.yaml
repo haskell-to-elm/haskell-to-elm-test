@@ -50,6 +50,7 @@ dependencies:
 - servant-server
 - text
 - unordered-containers
+- wai-cors
 - wai-extra
 - warp
 
