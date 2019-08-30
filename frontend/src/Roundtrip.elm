@@ -123,6 +123,7 @@ view model =
     column
         [ paddingXY 20 10
         , Background.color backgroundColor
+        , width <| px 200
         ]
         [ el [ width fill, Font.center ] <| text model.name
         , el [ width fill, Font.center, Font.color (rgb 0.5 0.5 0.5), Font.size 15 ] <| text <| "(" ++ explanation ++ ")"
