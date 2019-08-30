@@ -2,13 +2,7 @@ resolver: lts-14.3
 packages:
 - .
 extra-deps:
-- github: folq/elm-syntax
-  commit: 0be2fd70ddb3ef82cf63345769517f525bbf329b
-- github: folq/haskell-to-elm
-  commit: 314bfc644a685381d188d375ecb75e7390dfaec3
-- github: folq/servant-elm-bidirectional
-  commit: c6bc43d93667935b8aa85977bc1f372176b3732e
-- github: folq/servant-elm
-  commit: e4ffe997fb551b0a75fb55b17a9c9970d18818f3
-- github: folq/servant-foreign-bidirectional
-  commit: a1f397d440698545ef31f6f157099bfb2d3ea680
+- ../../elm-syntax
+- ../../haskell-to-elm
+- ../../servant-elm-bidirectional
+- ../../servant-foreign-bidirectional
