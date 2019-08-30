@@ -23,9 +23,9 @@ main = do
         { corsRequestHeaders = "authorization" : simpleHeaders
         }
       ) $
-    serve (Proxy :: Proxy API) server
+    serve (Proxy :: Proxy RoundtripAPI) server
 
-server :: Server API
+server :: Server RoundtripAPI
 server =
   arbitrary :<|> pure :<|>
   arbitrary :<|> pure :<|>
@@ -34,10 +34,10 @@ server =
   arbitrary :<|> pure :<|>
   arbitrary :<|> pure :<|>
   arbitrary :<|> pure
-
-arbitrary :: (MonadIO m, QuickCheck.Arbitrary a) => m [a]
-arbitrary = 
-  liftIO $
-    QuickCheck.generate $
-    sequence
-      [ QuickCheck.resize n QuickCheck.arbitrary | n <- [0..100] ]
+  where
+    arbitrary :: (MonadIO m, QuickCheck.Arbitrary a) => m [a]
+    arbitrary = 
+      liftIO $
+        QuickCheck.generate $
+        sequence
+          [ QuickCheck.resize n QuickCheck.arbitrary | n <- [0..100] ]

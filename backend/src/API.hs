@@ -26,7 +26,9 @@ import qualified Test.QuickCheck as QuickCheck
 
 type RoundTrip a = ReqBody '[JSON] a :> Post '[JSON] a
 
-type API
+type API = RoundtripAPI :<|> ServantFeatureAPI
+
+type RoundtripAPI
   = "arbitrary" :> "ints" :> Get '[JSON] [Int]
   :<|> "roundtrip" :> "int" :> RoundTrip Int
   :<|> "arbitrary" :> "tuples" :> Get '[JSON] [(Int, Text)]
@@ -41,6 +43,17 @@ type API
   :<|> "roundtrip" :> "singleconstructor" :> RoundTrip SingleConstructor
   :<|> "arbitrary" :> "singlefieldrecords" :> Get '[JSON] [SingleFieldRecord]
   :<|> "roundtrip" :> "singlefieldrecord" :> RoundTrip SingleFieldRecord
+
+type ServantFeatureAPI
+    = "header" :> Header "header" Text :> QueryFlag "flag" :> Get '[JSON] Int
+ :<|> "strictheader" :> Header' '[Required, Strict] "requiredHeader" Text :> QueryFlag "flag" :> Get '[JSON] Int
+ :<|> "twoheaders" :> Header "optionalHeader" Text :> Header' '[Required, Strict] "requiredHeader" Text :> QueryFlag "flag" :> Get '[JSON] Int
+ :<|> "paramandbody" :> QueryParam "param" Int :> ReqBody '[JSON] [Text] :> Post '[JSON] NoContent
+ :<|> "requiredparamandbody" :> QueryParam' '[Required, Strict] "param" Int :> ReqBody '[JSON] [Text] :> Post '[JSON] NoContent
+ :<|> "paramsandbody" :> QueryParams "params" Int :> ReqBody '[JSON] Text :> Put '[JSON] NoContent
+ :<|> "capture" :> Capture "id" Int :> Delete '[JSON] NoContent
+ :<|> "captures" :> CaptureAll "ids" Int :> Get '[JSON] [Int]
+ :<|> "static" :> "url" :> Get '[JSON] [Int]
 
 ---- Types ----
 
