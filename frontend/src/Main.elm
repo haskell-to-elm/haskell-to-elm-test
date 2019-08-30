@@ -5,11 +5,13 @@ import Api
 import Browser
 import Element exposing (..)
 import Element.Background as Background
+import Element.Font as Font
 import EnumADT
 import Http
 import Record
 import RemoteData exposing (RemoteData)
 import Roundtrip
+import SingleConstructor
 import WebData exposing (..)
 
 
@@ -23,6 +25,7 @@ type alias Model =
     , roundtripADT : Roundtrip.Model ADT.ADT
     , roundtripEnumADT : Roundtrip.Model EnumADT.EnumADT
     , roundtripRecord : Roundtrip.Model Record.Record
+    , roundtripSingleConstructor : Roundtrip.Model SingleConstructor.SingleConstructor
     }
 
 
@@ -31,37 +34,44 @@ init =
     let
         ( roundtripInt, roundtripIntCmd ) =
             Roundtrip.init
-                { name = "roundtripInt"
+                { name = "Int"
                 , arbitrary = Api.getArbitraryInts
                 , roundtrip = Api.postRoundtripInt
                 }
 
         ( roundtripTuple, roundtripTupleCmd ) =
             Roundtrip.init
-                { name = "roundtripTuple"
+                { name = "Tuple"
                 , arbitrary = Api.getArbitraryTuples
                 , roundtrip = Api.postRoundtripTuple
                 }
 
         ( roundtripADT, roundtripADTCmd ) =
             Roundtrip.init
-                { name = "roundtripADT"
+                { name = "ADT"
                 , arbitrary = Api.getArbitraryAdts
                 , roundtrip = Api.postRoundtripAdt
                 }
 
         ( roundtripEnumADT, roundtripEnumADTCmd ) =
             Roundtrip.init
-                { name = "roundtripEnumADT"
+                { name = "Enum ADT"
                 , arbitrary = Api.getArbitraryEnumadts
                 , roundtrip = Api.postRoundtripEnumadt
                 }
 
         ( roundtripRecord, roundtripRecordCmd ) =
             Roundtrip.init
-                { name = "roundtripRecord"
+                { name = "Record"
                 , arbitrary = Api.getArbitraryRecords
                 , roundtrip = Api.postRoundtripRecord
+                }
+
+        ( roundtripSingleConstructor, roundtripSingleConstructorCmd ) =
+            Roundtrip.init
+                { name = "Single constructor"
+                , arbitrary = Api.getArbitrarySingleconstructors
+                , roundtrip = Api.postRoundtripSingleconstructor
                 }
     in
     ( { roundtripInt = roundtripInt
@@ -69,6 +79,7 @@ init =
       , roundtripADT = roundtripADT
       , roundtripEnumADT = roundtripEnumADT
       , roundtripRecord = roundtripRecord
+      , roundtripSingleConstructor = roundtripSingleConstructor
       }
     , Cmd.batch
         [ Cmd.map GotRoundtripIntMsg roundtripIntCmd
@@ -76,6 +87,7 @@ init =
         , Cmd.map GotRoundtripADTMsg roundtripADTCmd
         , Cmd.map GotRoundtripEnumADTMsg roundtripEnumADTCmd
         , Cmd.map GotRoundtripRecordMsg roundtripRecordCmd
+        , Cmd.map GotRoundtripSingleConstructorMsg roundtripSingleConstructorCmd
         ]
     )
 
@@ -90,6 +102,7 @@ type Msg
     | GotRoundtripADTMsg (Roundtrip.Msg ADT.ADT)
     | GotRoundtripEnumADTMsg (Roundtrip.Msg EnumADT.EnumADT)
     | GotRoundtripRecordMsg (Roundtrip.Msg Record.Record)
+    | GotRoundtripSingleConstructorMsg (Roundtrip.Msg SingleConstructor.SingleConstructor)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -130,6 +143,13 @@ update msg model =
             in
             ( { model | roundtripRecord = roundtrip }, Cmd.map GotRoundtripRecordMsg roundtripCmd )
 
+        GotRoundtripSingleConstructorMsg subMsg ->
+            let
+                ( roundtrip, roundtripCmd ) =
+                    Roundtrip.update subMsg model.roundtripSingleConstructor
+            in
+            ( { model | roundtripSingleConstructor = roundtrip }, Cmd.map GotRoundtripSingleConstructorMsg roundtripCmd )
+
 
 
 ---- VIEW ----
@@ -137,12 +157,16 @@ update msg model =
 
 view : Model -> Element Msg
 view model =
-    column [ width fill, padding 30, spacing 10 ]
-        [ Roundtrip.view model.roundtripInt
-        , Roundtrip.view model.roundtripTuple
-        , Roundtrip.view model.roundtripADT
-        , Roundtrip.view model.roundtripEnumADT
-        , Roundtrip.view model.roundtripRecord
+    row [ width fill ]
+        [ column [ width fill, padding 30, spacing 10 ]
+            [ el [ width <| px 200, Font.center ] <| text "Roundtrip tests"
+            , Roundtrip.view model.roundtripInt
+            , Roundtrip.view model.roundtripTuple
+            , Roundtrip.view model.roundtripADT
+            , Roundtrip.view model.roundtripEnumADT
+            , Roundtrip.view model.roundtripRecord
+            , Roundtrip.view model.roundtripSingleConstructor
+            ]
         ]
 
 

@@ -31,6 +31,7 @@ server =
   arbitrary :<|> pure :<|>
   arbitrary :<|> pure :<|>
   arbitrary :<|> pure :<|>
+  arbitrary :<|> pure :<|>
   arbitrary :<|> pure
 
 arbitrary :: (MonadIO m, QuickCheck.Arbitrary a) => m [a]

@@ -37,6 +37,8 @@ type API
   :<|> "roundtrip" :> "enumadt" :> RoundTrip EnumADT
   :<|> "arbitrary" :> "records" :> Get '[JSON] [Record]
   :<|> "roundtrip" :> "record" :> RoundTrip Record
+  :<|> "arbitrary" :> "singleconstructors" :> Get '[JSON] [SingleConstructor]
+  :<|> "roundtrip" :> "singleconstructor" :> RoundTrip SingleConstructor
 
 ---- Types ----
 
@@ -47,6 +49,9 @@ data EnumADT = EnumA | EnumB | EnumC
   deriving (GHC.Generic)
 
 data Record = Record { _x :: Int, _y :: Maybe Int }
+  deriving (GHC.Generic)
+
+data SingleConstructor = SingleConstructor Bool Int
   deriving (GHC.Generic)
 
 ---- ADT ----
@@ -103,7 +108,6 @@ instance HasElmDecoder Aeson.Value EnumADT where
 
 Aeson.deriveJSON Aeson.defaultOptions ''EnumADT
 
-
 ---- Record ----
 
 instance QuickCheck.Arbitrary Record where
@@ -131,25 +135,32 @@ instance HasElmEncoder Aeson.Value Record
 
 Aeson.deriveJSON Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } ''Record
 
--- data SingleConstructor = SingleConstructor Bool Int
---   deriving (GHC.Generic)
+---- SingleConstructor ----
 
--- instance SOP.Generic SingleConstructor
--- instance HasDatatypeInfo SingleConstructor
+instance QuickCheck.Arbitrary SingleConstructor where
+  arbitrary =
+    genericArbitraryU
 
--- instance Aeson.ToJSON SingleConstructor where
---   toEncoding = Aeson.genericToEncoding Aeson.defaultOptions
+instance SOP.Generic SingleConstructor
+instance HasDatatypeInfo SingleConstructor
 
--- instance HasElmDefinition SingleConstructor where
---   elmDefinition = deriveElmTypeDefinition @SingleConstructor defaultOptions { fieldLabelModifier = drop 1 } "SingleConstructor.SingleConstructor"
+instance HasElmDefinition SingleConstructor where
+  elmDefinition =
+    deriveElmTypeDefinition @SingleConstructor defaultOptions "SingleConstructor.SingleConstructor"
 
--- instance HasElmDecoderDefinition Aeson.Value SingleConstructor where
---   elmDecoderDefinition = deriveElmJSONDecoder @SingleConstructor defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "SingleConstructor.decode"
+instance HasElmDecoderDefinition Aeson.Value SingleConstructor where
+  elmDecoderDefinition =
+    deriveElmJSONDecoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.decode"
 
--- instance HasElmEncoderDefinition Aeson.Value SingleConstructor where
---   elmEncoderDefinition = deriveElmJSONEncoder @SingleConstructor defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "SingleConstructor.encode"
+instance HasElmEncoderDefinition Aeson.Value SingleConstructor where
+  elmEncoderDefinition =
+    deriveElmJSONEncoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.encode"
 
--- instance HasElmType SingleConstructor where
+instance HasElmType SingleConstructor where
+instance HasElmDecoder Aeson.Value SingleConstructor
+instance HasElmEncoder Aeson.Value SingleConstructor
+
+Aeson.deriveJSON Aeson.defaultOptions ''SingleConstructor
 
 -- data SingleFieldRecord = SingleFieldRecord { _singleField :: Int }
 --   deriving (GHC.Generic)
