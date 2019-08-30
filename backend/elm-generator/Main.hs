@@ -43,6 +43,7 @@ main = do
           , jsonDefinitions @EnumADT
           , jsonDefinitions @Record
           , jsonDefinitions @SingleConstructor
+          , jsonDefinitions @SingleFieldRecord
           ]
 
 requests :: [Servant.Request ElmEncoder ElmDecoder]

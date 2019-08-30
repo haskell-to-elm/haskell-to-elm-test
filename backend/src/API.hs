@@ -39,6 +39,8 @@ type API
   :<|> "roundtrip" :> "record" :> RoundTrip Record
   :<|> "arbitrary" :> "singleconstructors" :> Get '[JSON] [SingleConstructor]
   :<|> "roundtrip" :> "singleconstructor" :> RoundTrip SingleConstructor
+  :<|> "arbitrary" :> "singlefieldrecords" :> Get '[JSON] [SingleFieldRecord]
+  :<|> "roundtrip" :> "singlefieldrecord" :> RoundTrip SingleFieldRecord
 
 ---- Types ----
 
@@ -52,6 +54,9 @@ data Record = Record { _x :: Int, _y :: Maybe Int }
   deriving (GHC.Generic)
 
 data SingleConstructor = SingleConstructor Bool Int
+  deriving (GHC.Generic)
+
+newtype SingleFieldRecord = SingleFieldRecord { _singleField :: Int }
   deriving (GHC.Generic)
 
 ---- ADT ----
@@ -161,6 +166,33 @@ instance HasElmDecoder Aeson.Value SingleConstructor
 instance HasElmEncoder Aeson.Value SingleConstructor
 
 Aeson.deriveJSON Aeson.defaultOptions ''SingleConstructor
+
+---- SingleFieldRecord ----
+
+instance QuickCheck.Arbitrary SingleFieldRecord where
+  arbitrary =
+    genericArbitraryU
+
+instance SOP.Generic SingleFieldRecord
+instance HasDatatypeInfo SingleFieldRecord
+
+instance HasElmDefinition SingleFieldRecord where
+  elmDefinition =
+    deriveElmTypeDefinition @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } "SingleFieldRecord.SingleFieldRecord"
+
+instance HasElmDecoderDefinition Aeson.Value SingleFieldRecord where
+  elmDecoderDefinition =
+    deriveElmJSONDecoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.decode"
+
+instance HasElmEncoderDefinition Aeson.Value SingleFieldRecord where
+  elmEncoderDefinition =
+    deriveElmJSONEncoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.encode"
+
+instance HasElmType SingleFieldRecord where
+instance HasElmDecoder Aeson.Value SingleFieldRecord
+instance HasElmEncoder Aeson.Value SingleFieldRecord
+
+Aeson.deriveJSON Aeson.defaultOptions ''SingleFieldRecord
 
 -- data SingleFieldRecord = SingleFieldRecord { _singleField :: Int }
 --   deriving (GHC.Generic)

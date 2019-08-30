@@ -12,6 +12,7 @@ import Record
 import RemoteData exposing (RemoteData)
 import Roundtrip
 import SingleConstructor
+import SingleFieldRecord
 import WebData exposing (..)
 
 
@@ -26,6 +27,7 @@ type alias Model =
     , roundtripEnumADT : Roundtrip.Model EnumADT.EnumADT
     , roundtripRecord : Roundtrip.Model Record.Record
     , roundtripSingleConstructor : Roundtrip.Model SingleConstructor.SingleConstructor
+    , roundtripSingleFieldRecord : Roundtrip.Model SingleFieldRecord.SingleFieldRecord
     }
 
 
@@ -73,6 +75,13 @@ init =
                 , arbitrary = Api.getArbitrarySingleconstructors
                 , roundtrip = Api.postRoundtripSingleconstructor
                 }
+
+        ( roundtripSingleFieldRecord, roundtripSingleFieldRecordCmd ) =
+            Roundtrip.init
+                { name = "Single field record"
+                , arbitrary = Api.getArbitrarySinglefieldrecords
+                , roundtrip = Api.postRoundtripSinglefieldrecord
+                }
     in
     ( { roundtripInt = roundtripInt
       , roundtripTuple = roundtripTuple
@@ -80,6 +89,7 @@ init =
       , roundtripEnumADT = roundtripEnumADT
       , roundtripRecord = roundtripRecord
       , roundtripSingleConstructor = roundtripSingleConstructor
+      , roundtripSingleFieldRecord = roundtripSingleFieldRecord
       }
     , Cmd.batch
         [ Cmd.map GotRoundtripIntMsg roundtripIntCmd
@@ -88,6 +98,7 @@ init =
         , Cmd.map GotRoundtripEnumADTMsg roundtripEnumADTCmd
         , Cmd.map GotRoundtripRecordMsg roundtripRecordCmd
         , Cmd.map GotRoundtripSingleConstructorMsg roundtripSingleConstructorCmd
+        , Cmd.map GotRoundtripSingleFieldRecordMsg roundtripSingleFieldRecordCmd
         ]
     )
 
@@ -103,6 +114,7 @@ type Msg
     | GotRoundtripEnumADTMsg (Roundtrip.Msg EnumADT.EnumADT)
     | GotRoundtripRecordMsg (Roundtrip.Msg Record.Record)
     | GotRoundtripSingleConstructorMsg (Roundtrip.Msg SingleConstructor.SingleConstructor)
+    | GotRoundtripSingleFieldRecordMsg (Roundtrip.Msg SingleFieldRecord.SingleFieldRecord)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -150,6 +162,13 @@ update msg model =
             in
             ( { model | roundtripSingleConstructor = roundtrip }, Cmd.map GotRoundtripSingleConstructorMsg roundtripCmd )
 
+        GotRoundtripSingleFieldRecordMsg subMsg ->
+            let
+                ( roundtrip, roundtripCmd ) =
+                    Roundtrip.update subMsg model.roundtripSingleFieldRecord
+            in
+            ( { model | roundtripSingleFieldRecord = roundtrip }, Cmd.map GotRoundtripSingleFieldRecordMsg roundtripCmd )
+
 
 
 ---- VIEW ----
@@ -166,6 +185,7 @@ view model =
             , Roundtrip.view model.roundtripEnumADT
             , Roundtrip.view model.roundtripRecord
             , Roundtrip.view model.roundtripSingleConstructor
+            , Roundtrip.view model.roundtripSingleFieldRecord
             ]
         ]
 
