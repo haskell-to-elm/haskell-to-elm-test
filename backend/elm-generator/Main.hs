@@ -37,7 +37,7 @@ main = do
   where
     modules =
       HashMap.toList $
-      Pretty.modules $ map (elmRequest "Config.api" ["Api2"]) requests -- <> everything @something
+      Pretty.modules $ map (elmRequest "Config.api" ["Api"]) requests -- <> everything @something
 
 requests :: [Servant.Request ElmEncoder ElmDecoder]
 requests =
