@@ -35,11 +35,13 @@ dependencies:
 - base >= 4.7 && < 5
 - elm-syntax
 - haskell-to-elm
+- protolude
 - servant
 - servant-elm
 - servant-elm-bidirectional
 - servant-foreign-bidirectional
 - servant-server
+- warp
 
 library:
   source-dirs: src
