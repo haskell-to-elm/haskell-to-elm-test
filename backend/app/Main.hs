@@ -1,11 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 module Main where
 
 import Protolude
 
-import qualified Data.Text as Text
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.Cors
 import Network.Wai.Middleware.RequestLogger
@@ -30,6 +28,8 @@ main = do
 server :: Server API
 server =
   arbitrary :<|> pure :<|>
+  arbitrary :<|> pure :<|>
+  arbitrary :<|> pure :<|>
   arbitrary :<|> pure
 
 arbitrary :: (MonadIO m, QuickCheck.Arbitrary a) => m [a]
@@ -38,7 +38,3 @@ arbitrary =
     QuickCheck.generate $
     sequence
       [ QuickCheck.resize n QuickCheck.arbitrary | n <- [0..100] ]
-
-instance QuickCheck.Arbitrary Text where
-  arbitrary =
-    Text.pack <$> QuickCheck.arbitrary

@@ -42,6 +42,8 @@ dependencies:
 - directory
 - elm-syntax
 - filepath
+- generic-random
+- generics-sop
 - haskell-to-elm
 - protolude
 - servant
