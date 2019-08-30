@@ -7,6 +7,7 @@ import Element exposing (..)
 import Element.Background as Background
 import EnumADT
 import Http
+import Record
 import RemoteData exposing (RemoteData)
 import Roundtrip
 import WebData exposing (..)
@@ -21,6 +22,7 @@ type alias Model =
     , roundtripTuple : Roundtrip.Model ( Int, String )
     , roundtripADT : Roundtrip.Model ADT.ADT
     , roundtripEnumADT : Roundtrip.Model EnumADT.EnumADT
+    , roundtripRecord : Roundtrip.Model Record.Record
     }
 
 
@@ -54,17 +56,26 @@ init =
                 , arbitrary = Api.getArbitraryEnumadts
                 , roundtrip = Api.postRoundtripEnumadt
                 }
+
+        ( roundtripRecord, roundtripRecordCmd ) =
+            Roundtrip.init
+                { name = "roundtripRecord"
+                , arbitrary = Api.getArbitraryRecords
+                , roundtrip = Api.postRoundtripRecord
+                }
     in
     ( { roundtripInt = roundtripInt
       , roundtripTuple = roundtripTuple
       , roundtripADT = roundtripADT
       , roundtripEnumADT = roundtripEnumADT
+      , roundtripRecord = roundtripRecord
       }
     , Cmd.batch
         [ Cmd.map GotRoundtripIntMsg roundtripIntCmd
         , Cmd.map GotRoundtripTupleMsg roundtripTupleCmd
         , Cmd.map GotRoundtripADTMsg roundtripADTCmd
         , Cmd.map GotRoundtripEnumADTMsg roundtripEnumADTCmd
+        , Cmd.map GotRoundtripRecordMsg roundtripRecordCmd
         ]
     )
 
@@ -78,6 +89,7 @@ type Msg
     | GotRoundtripTupleMsg (Roundtrip.Msg ( Int, String ))
     | GotRoundtripADTMsg (Roundtrip.Msg ADT.ADT)
     | GotRoundtripEnumADTMsg (Roundtrip.Msg EnumADT.EnumADT)
+    | GotRoundtripRecordMsg (Roundtrip.Msg Record.Record)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -111,6 +123,13 @@ update msg model =
             in
             ( { model | roundtripEnumADT = roundtrip }, Cmd.map GotRoundtripEnumADTMsg roundtripCmd )
 
+        GotRoundtripRecordMsg subMsg ->
+            let
+                ( roundtrip, roundtripCmd ) =
+                    Roundtrip.update subMsg model.roundtripRecord
+            in
+            ( { model | roundtripRecord = roundtrip }, Cmd.map GotRoundtripRecordMsg roundtripCmd )
+
 
 
 ---- VIEW ----
@@ -123,6 +142,7 @@ view model =
         , Roundtrip.view model.roundtripTuple
         , Roundtrip.view model.roundtripADT
         , Roundtrip.view model.roundtripEnumADT
+        , Roundtrip.view model.roundtripRecord
         ]
 
 

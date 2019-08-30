@@ -27,14 +27,16 @@ import qualified Test.QuickCheck as QuickCheck
 type RoundTrip a = ReqBody '[JSON] a :> Post '[JSON] a
 
 type API
-    = "arbitrary" :> "ints" :> Get '[JSON] [Int]
-    :<|> "roundtrip" :> "int" :> RoundTrip Int
-    :<|> "arbitrary" :> "tuples" :> Get '[JSON] [(Int, Text)]
-    :<|> "roundtrip" :> "tuple" :> RoundTrip (Int, Text)
-    :<|> "arbitrary" :> "adts" :> Get '[JSON] [ADT]
-    :<|> "roundtrip" :> "adt" :> RoundTrip ADT
-    :<|> "arbitrary" :> "enumadts" :> Get '[JSON] [EnumADT]
-    :<|> "roundtrip" :> "enumadt" :> RoundTrip EnumADT
+  = "arbitrary" :> "ints" :> Get '[JSON] [Int]
+  :<|> "roundtrip" :> "int" :> RoundTrip Int
+  :<|> "arbitrary" :> "tuples" :> Get '[JSON] [(Int, Text)]
+  :<|> "roundtrip" :> "tuple" :> RoundTrip (Int, Text)
+  :<|> "arbitrary" :> "adts" :> Get '[JSON] [ADT]
+  :<|> "roundtrip" :> "adt" :> RoundTrip ADT
+  :<|> "arbitrary" :> "enumadts" :> Get '[JSON] [EnumADT]
+  :<|> "roundtrip" :> "enumadt" :> RoundTrip EnumADT
+  :<|> "arbitrary" :> "records" :> Get '[JSON] [Record]
+  :<|> "roundtrip" :> "record" :> RoundTrip Record
 
 ---- Types ----
 
@@ -44,26 +46,29 @@ data ADT = ADTA Int Double | ADTB Text | ADTC
 data EnumADT = EnumA | EnumB | EnumC
   deriving (GHC.Generic)
 
+data Record = Record { _x :: Int, _y :: Maybe Int }
+  deriving (GHC.Generic)
+
 ---- ADT ----
 
 instance QuickCheck.Arbitrary ADT where
   arbitrary =
-      genericArbitraryU
+    genericArbitraryU
 
 instance SOP.Generic ADT
 instance HasDatatypeInfo ADT
 
 instance HasElmDefinition ADT where
   elmDefinition =
-      deriveElmTypeDefinition @ADT defaultOptions "ADT.ADT"
+    deriveElmTypeDefinition @ADT defaultOptions "ADT.ADT"
 
 instance HasElmDecoderDefinition Aeson.Value ADT where
   elmDecoderDefinition =
-      deriveElmJSONDecoder @ADT defaultOptions Aeson.defaultOptions "ADT.decode"
+    deriveElmJSONDecoder @ADT defaultOptions Aeson.defaultOptions "ADT.decode"
 
 instance HasElmEncoderDefinition Aeson.Value ADT where
   elmEncoderDefinition =
-      deriveElmJSONEncoder @ADT defaultOptions Aeson.defaultOptions "ADT.encode"
+    deriveElmJSONEncoder @ADT defaultOptions Aeson.defaultOptions "ADT.encode"
 
 instance HasElmType ADT where
 instance HasElmEncoder Aeson.Value ADT where
@@ -75,22 +80,22 @@ Aeson.deriveJSON Aeson.defaultOptions ''ADT
 
 instance QuickCheck.Arbitrary EnumADT where
   arbitrary =
-      genericArbitraryU
+    genericArbitraryU
 
 instance SOP.Generic EnumADT
 instance HasDatatypeInfo EnumADT
 
 instance HasElmDefinition EnumADT where
   elmDefinition =
-      deriveElmTypeDefinition @EnumADT defaultOptions "EnumADT.EnumADT"
+    deriveElmTypeDefinition @EnumADT defaultOptions "EnumADT.EnumADT"
 
 instance HasElmDecoderDefinition Aeson.Value EnumADT where
   elmDecoderDefinition =
-      deriveElmJSONDecoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.decode"
+    deriveElmJSONDecoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.decode"
 
 instance HasElmEncoderDefinition Aeson.Value EnumADT where
   elmEncoderDefinition =
-      deriveElmJSONEncoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.encode"
+    deriveElmJSONEncoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.encode"
 
 instance HasElmType EnumADT where
 instance HasElmEncoder Aeson.Value EnumADT where
@@ -99,40 +104,32 @@ instance HasElmDecoder Aeson.Value EnumADT where
 Aeson.deriveJSON Aeson.defaultOptions ''EnumADT
 
 
--- data Test2 = C | D
---   deriving (GHC.Generic)
+---- Record ----
 
--- instance SOP.Generic Test2
--- instance HasDatatypeInfo Test2
+instance QuickCheck.Arbitrary Record where
+  arbitrary =
+    genericArbitraryU
 
--- instance HasElmDefinition Test2 where
---   elmDefinition = deriveElmTypeDefinition @Test2 defaultOptions { fieldLabelModifier = drop 1 } "Test2.Test2"
+instance SOP.Generic Record
+instance HasDatatypeInfo Record
 
--- instance HasElmDecoderDefinition Aeson.Value Test2 where
---   elmDecoderDefinition = deriveElmJSONDecoder @Test2 defaultOptions Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Test2.decode"
+instance HasElmDefinition Record where
+  elmDefinition =
+    deriveElmTypeDefinition @Record defaultOptions { fieldLabelModifier = drop 1 } "Record.Record"
 
--- instance HasElmEncoderDefinition Aeson.Value Test2 where
---   elmEncoderDefinition = deriveElmJSONEncoder @Test2 defaultOptions Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Test2.encode"
+instance HasElmDecoderDefinition Aeson.Value Record where
+  elmDecoderDefinition =
+    deriveElmJSONDecoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.decode"
 
--- instance HasElmType Test2 where
+instance HasElmEncoderDefinition Aeson.Value Record where
+  elmEncoderDefinition =
+    deriveElmJSONEncoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.encode"
 
--- data Rec = Rec { _x :: Int, _y :: Maybe Int }
---   deriving (GHC.Generic)
+instance HasElmType Record where
+instance HasElmDecoder Aeson.Value Record
+instance HasElmEncoder Aeson.Value Record
 
--- instance SOP.Generic Rec
--- instance HasDatatypeInfo Rec
-
--- instance HasElmDefinition Rec where
---   elmDefinition = deriveElmTypeDefinition @Rec defaultOptions { fieldLabelModifier = drop 1 } "Rec.Rec"
--- instance HasElmType Rec where
-
--- instance HasElmDecoderDefinition Aeson.Value Rec where
---   elmDecoderDefinition = deriveElmJSONDecoder @Rec defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Rec.decode"
-
--- instance HasElmEncoderDefinition Aeson.Value Rec where
---   elmEncoderDefinition = deriveElmJSONEncoder @Rec defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Rec.encode"
-
--- instance HasElmDecoder Aeson.Value Rec
+Aeson.deriveJSON Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } ''Record
 
 -- data SingleConstructor = SingleConstructor Bool Int
 --   deriving (GHC.Generic)
@@ -174,19 +171,3 @@ Aeson.deriveJSON Aeson.defaultOptions ''EnumADT
 --   elmEncoderDefinition = deriveElmJSONEncoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1, Aeson.unwrapUnaryRecords = False } "SingleFieldRecord.encode"
 
 -- instance HasElmType SingleFieldRecord where
-
--- everything :: forall t. (HasElmDefinition t, HasElmEncoderDefinition Aeson.Value t, HasElmDecoderDefinition Aeson.Value t) => [Definition]
--- everything =
---   [ elmDefinition @t
---   , elmEncoderDefinition @Aeson.Value @t
---   , elmDecoderDefinition @Aeson.Value @t
---   ]
-
--- test = Pretty.modules $
---   concat $
---   [ everything @Test
---   , everything @Test2
---   , everything @Rec
---   , everything @SingleConstructor
---   , everything @SingleFieldRecord
---   ]

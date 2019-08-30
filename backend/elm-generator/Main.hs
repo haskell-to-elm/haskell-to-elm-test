@@ -41,6 +41,7 @@ main = do
         mconcat
           [ jsonDefinitions @ADT
           , jsonDefinitions @EnumADT
+          , jsonDefinitions @Record
           ]
 
 requests :: [Servant.Request ElmEncoder ElmDecoder]
