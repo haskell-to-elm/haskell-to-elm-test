@@ -10,7 +10,9 @@ import Network.Wai.Middleware.RequestLogger
 import Servant.API
 import Servant.Server
 import qualified Test.QuickCheck as QuickCheck
+import Test.QuickCheck.Instances.Text ()
 
+import Orphans ()
 import API
 
 main :: IO ()
@@ -27,6 +29,7 @@ main = do
 
 server :: Server RoundtripAPI
 server =
+  arbitrary :<|> pure :<|>
   arbitrary :<|> pure :<|>
   arbitrary :<|> pure :<|>
   arbitrary :<|> pure :<|>

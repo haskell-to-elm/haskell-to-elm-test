@@ -16,13 +16,14 @@ import Protolude
 import qualified Data.Aeson as Aeson
 import qualified Data.Aeson.TH as Aeson
 import Data.Text (Text)
+import Data.Time
 import Generic.Random (genericArbitraryU)
 import Generics.SOP as SOP
 import qualified GHC.Generics as GHC
 import Language.Haskell.To.Elm
-import Orphans ()
 import Servant.API
 import qualified Test.QuickCheck as QuickCheck
+import Test.QuickCheck.Instances.Text ()
 
 type RoundTrip a = ReqBody '[JSON] a :> Post '[JSON] a
 
@@ -31,6 +32,8 @@ type API = RoundtripAPI :<|> ServantFeatureAPI
 type RoundtripAPI
   = "arbitrary" :> "ints" :> Get '[JSON] [Int]
   :<|> "roundtrip" :> "int" :> RoundTrip Int
+  :<|> "arbitrary" :> "utctimes" :> Get '[JSON] [UTCTime]
+  :<|> "roundtrip" :> "utctime" :> RoundTrip UTCTime
   :<|> "arbitrary" :> "tuples" :> Get '[JSON] [(Int, Text)]
   :<|> "roundtrip" :> "tuple" :> RoundTrip (Int, Text)
   :<|> "arbitrary" :> "adts" :> Get '[JSON] [ADT]

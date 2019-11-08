@@ -37,6 +37,7 @@ _exe-ghc-options: &exe-ghc-options
 
 dependencies:
 - QuickCheck
+- quickcheck-instances
 - aeson
 - base >= 4.7 && < 5
 - directory
@@ -52,6 +53,7 @@ dependencies:
 - servant-foreign-bidirectional
 - servant-server
 - text
+- time
 - unordered-containers
 - wai-cors
 - wai-extra

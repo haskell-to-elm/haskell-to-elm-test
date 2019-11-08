@@ -13,6 +13,7 @@ import RemoteData exposing (RemoteData)
 import Roundtrip
 import SingleConstructor
 import SingleFieldRecord
+import Time
 import WebData exposing (..)
 
 
@@ -22,6 +23,7 @@ import WebData exposing (..)
 
 type alias Model =
     { roundtripInt : Roundtrip.Model Int
+    , roundtripUTCTime : Roundtrip.Model Time.Posix
     , roundtripTuple : Roundtrip.Model ( Int, String )
     , roundtripADT : Roundtrip.Model ADT.ADT
     , roundtripEnumADT : Roundtrip.Model EnumADT.EnumADT
@@ -39,6 +41,13 @@ init =
                 { name = "Int"
                 , arbitrary = Api.getArbitraryInts
                 , roundtrip = Api.postRoundtripInt
+                }
+
+        ( roundtripUTCTime, roundtripUTCTimeCmd ) =
+            Roundtrip.init
+                { name = "UTCTime"
+                , arbitrary = Api.getArbitraryUtctimes
+                , roundtrip = Api.postRoundtripUtctime
                 }
 
         ( roundtripTuple, roundtripTupleCmd ) =
@@ -84,6 +93,7 @@ init =
                 }
     in
     ( { roundtripInt = roundtripInt
+      , roundtripUTCTime = roundtripUTCTime
       , roundtripTuple = roundtripTuple
       , roundtripADT = roundtripADT
       , roundtripEnumADT = roundtripEnumADT
@@ -93,6 +103,7 @@ init =
       }
     , Cmd.batch
         [ Cmd.map GotRoundtripIntMsg roundtripIntCmd
+        , Cmd.map GotRoundtripUTCTimeMsg roundtripUTCTimeCmd
         , Cmd.map GotRoundtripTupleMsg roundtripTupleCmd
         , Cmd.map GotRoundtripADTMsg roundtripADTCmd
         , Cmd.map GotRoundtripEnumADTMsg roundtripEnumADTCmd
@@ -109,6 +120,7 @@ init =
 
 type Msg
     = GotRoundtripIntMsg (Roundtrip.Msg Int)
+    | GotRoundtripUTCTimeMsg (Roundtrip.Msg Time.Posix)
     | GotRoundtripTupleMsg (Roundtrip.Msg ( Int, String ))
     | GotRoundtripADTMsg (Roundtrip.Msg ADT.ADT)
     | GotRoundtripEnumADTMsg (Roundtrip.Msg EnumADT.EnumADT)
@@ -126,6 +138,13 @@ update msg model =
                     Roundtrip.update subMsg model.roundtripInt
             in
             ( { model | roundtripInt = roundtrip }, Cmd.map GotRoundtripIntMsg roundtripCmd )
+
+        GotRoundtripUTCTimeMsg subMsg ->
+            let
+                ( roundtrip, roundtripCmd ) =
+                    Roundtrip.update subMsg model.roundtripUTCTime
+            in
+            ( { model | roundtripUTCTime = roundtrip }, Cmd.map GotRoundtripUTCTimeMsg roundtripCmd )
 
         GotRoundtripTupleMsg subMsg ->
             let
@@ -180,6 +199,7 @@ view model =
         [ column [ width fill, padding 30, spacing 10 ]
             [ el [ width <| px 200, Font.center ] <| text "Roundtrip tests"
             , Roundtrip.view model.roundtripInt
+            , Roundtrip.view model.roundtripUTCTime
             , Roundtrip.view model.roundtripTuple
             , Roundtrip.view model.roundtripADT
             , Roundtrip.view model.roundtripEnumADT
