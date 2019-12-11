@@ -44,6 +44,7 @@ main = do
           , jsonDefinitions @Record
           , jsonDefinitions @SingleConstructor
           , jsonDefinitions @SingleFieldRecord
+          , jsonDefinitions @NestedADT
           ]
 
 requests :: [Servant.Request ElmEncoder ElmDecoder]

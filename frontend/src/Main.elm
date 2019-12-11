@@ -8,6 +8,7 @@ import Element.Background as Background
 import Element.Font as Font
 import EnumADT
 import Http
+import NestedADT
 import Record
 import RemoteData exposing (RemoteData)
 import Roundtrip
@@ -30,6 +31,7 @@ type alias Model =
     , roundtripRecord : Roundtrip.Model Record.Record
     , roundtripSingleConstructor : Roundtrip.Model SingleConstructor.SingleConstructor
     , roundtripSingleFieldRecord : Roundtrip.Model SingleFieldRecord.SingleFieldRecord
+    , roundtripNestedADT : Roundtrip.Model NestedADT.NestedADT
     }
 
 
@@ -91,6 +93,13 @@ init =
                 , arbitrary = Api.getArbitrarySinglefieldrecords
                 , roundtrip = Api.postRoundtripSinglefieldrecord
                 }
+
+        ( roundtripNestedADT, roundtripNestedADTCmd ) =
+            Roundtrip.init
+                { name = "Nested ADT"
+                , arbitrary = Api.getArbitraryNestedadts
+                , roundtrip = Api.postRoundtripNestedadt
+                }
     in
     ( { roundtripInt = roundtripInt
       , roundtripUTCTime = roundtripUTCTime
@@ -100,6 +109,7 @@ init =
       , roundtripRecord = roundtripRecord
       , roundtripSingleConstructor = roundtripSingleConstructor
       , roundtripSingleFieldRecord = roundtripSingleFieldRecord
+      , roundtripNestedADT = roundtripNestedADT
       }
     , Cmd.batch
         [ Cmd.map GotRoundtripIntMsg roundtripIntCmd
@@ -110,6 +120,7 @@ init =
         , Cmd.map GotRoundtripRecordMsg roundtripRecordCmd
         , Cmd.map GotRoundtripSingleConstructorMsg roundtripSingleConstructorCmd
         , Cmd.map GotRoundtripSingleFieldRecordMsg roundtripSingleFieldRecordCmd
+        , Cmd.map GotRoundtripNestedADTMsg roundtripNestedADTCmd
         ]
     )
 
@@ -127,6 +138,7 @@ type Msg
     | GotRoundtripRecordMsg (Roundtrip.Msg Record.Record)
     | GotRoundtripSingleConstructorMsg (Roundtrip.Msg SingleConstructor.SingleConstructor)
     | GotRoundtripSingleFieldRecordMsg (Roundtrip.Msg SingleFieldRecord.SingleFieldRecord)
+    | GotRoundtripNestedADTMsg (Roundtrip.Msg NestedADT.NestedADT)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -188,6 +200,13 @@ update msg model =
             in
             ( { model | roundtripSingleFieldRecord = roundtrip }, Cmd.map GotRoundtripSingleFieldRecordMsg roundtripCmd )
 
+        GotRoundtripNestedADTMsg subMsg ->
+            let
+                ( roundtrip, roundtripCmd ) =
+                    Roundtrip.update subMsg model.roundtripNestedADT
+            in
+            ( { model | roundtripNestedADT = roundtrip }, Cmd.map GotRoundtripNestedADTMsg roundtripCmd )
+
 
 
 ---- VIEW ----
@@ -206,6 +225,7 @@ view model =
             , Roundtrip.view model.roundtripRecord
             , Roundtrip.view model.roundtripSingleConstructor
             , Roundtrip.view model.roundtripSingleFieldRecord
+            , Roundtrip.view model.roundtripNestedADT
             ]
         ]
 

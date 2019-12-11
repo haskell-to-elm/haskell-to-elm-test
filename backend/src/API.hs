@@ -46,6 +46,8 @@ type RoundtripAPI
   :<|> "roundtrip" :> "singleconstructor" :> RoundTrip SingleConstructor
   :<|> "arbitrary" :> "singlefieldrecords" :> Get '[JSON] [SingleFieldRecord]
   :<|> "roundtrip" :> "singlefieldrecord" :> RoundTrip SingleFieldRecord
+  :<|> "arbitrary" :> "nestedadts" :> Get '[JSON] [NestedADT]
+  :<|> "roundtrip" :> "nestedadt" :> RoundTrip NestedADT
 
 type ServantFeatureAPI
     = "header" :> Header "header" Text :> QueryFlag "flag" :> Get '[JSON] Int
@@ -73,6 +75,11 @@ data SingleConstructor = SingleConstructor Bool Int
   deriving (GHC.Generic)
 
 newtype SingleFieldRecord = SingleFieldRecord { _singleField :: Int }
+  deriving (GHC.Generic)
+
+data NestedADT
+  = FirstConstructor ADT [EnumADT]
+  | SecondConstructor ADT [EnumADT]
   deriving (GHC.Generic)
 
 ---- ADT ----
@@ -209,3 +216,31 @@ instance HasElmDecoder Aeson.Value SingleFieldRecord
 instance HasElmEncoder Aeson.Value SingleFieldRecord
 
 Aeson.deriveJSON Aeson.defaultOptions ''SingleFieldRecord
+
+---- NestedADT ----
+
+
+instance QuickCheck.Arbitrary NestedADT where
+  arbitrary =
+    genericArbitraryU
+
+instance SOP.Generic NestedADT
+instance HasDatatypeInfo NestedADT
+
+instance HasElmDefinition NestedADT where
+  elmDefinition =
+    deriveElmTypeDefinition @NestedADT defaultOptions { fieldLabelModifier = drop 1 } "NestedADT.NestedADT"
+
+instance HasElmDecoderDefinition Aeson.Value NestedADT where
+  elmDecoderDefinition =
+    deriveElmJSONDecoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.decode"
+
+instance HasElmEncoderDefinition Aeson.Value NestedADT where
+  elmEncoderDefinition =
+    deriveElmJSONEncoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.encode"
+
+instance HasElmType NestedADT where
+instance HasElmDecoder Aeson.Value NestedADT
+instance HasElmEncoder Aeson.Value NestedADT
+
+Aeson.deriveJSON Aeson.defaultOptions ''NestedADT
