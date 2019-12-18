@@ -50,7 +50,6 @@ dependencies:
 - servant
 - servant-elm
 - servant-elm-bidirectional
-- servant-foreign-bidirectional
 - servant-server
 - text
 - time

@@ -11,7 +11,6 @@ import qualified Data.Text as Text
 import qualified Language.Elm.Pretty as Pretty
 import Language.Haskell.To.Elm
 import Servant.Elm.Bidirectional
-import qualified Servant.Foreign.Bidirectional as Servant
 import System.Directory
 import System.FilePath
 
@@ -37,7 +36,7 @@ main = do
   where
     modules =
       HashMap.toList $
-      Pretty.modules $ map (elmRequest "Config.api" ["Api"]) requests <>
+      Pretty.modules $ map (elmEndpointDefinition "Config.api" ["Api"]) (elmEndpoints @API) <>
         mconcat
           [ jsonDefinitions @ADT
           , jsonDefinitions @EnumADT
@@ -46,11 +45,3 @@ main = do
           , jsonDefinitions @SingleFieldRecord
           , jsonDefinitions @NestedADT
           ]
-
-requests :: [Servant.Request ElmEncoder ElmDecoder]
-requests =
-  Servant.listFromAPI
-    (Proxy :: Proxy Elm)
-    (Proxy :: Proxy ElmEncoder)
-    (Proxy :: Proxy ElmDecoder)
-    (Proxy :: Proxy API)
