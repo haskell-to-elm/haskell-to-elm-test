@@ -10,7 +10,7 @@ import qualified Data.HashMap.Lazy as HashMap
 import qualified Data.Text as Text
 import qualified Language.Elm.Pretty as Pretty
 import Language.Haskell.To.Elm
-import Servant.Elm.Bidirectional
+import Servant.To.Elm
 import System.Directory
 import System.FilePath
 

@@ -4,5 +4,4 @@ packages:
 extra-deps:
 - ../../elm-syntax
 - ../../haskell-to-elm
-- ../../servant-elm-bidirectional
-- ../../servant-foreign-bidirectional
+- ../../servant-to-elm

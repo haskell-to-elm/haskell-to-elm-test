@@ -4,7 +4,7 @@ End-to-end fuzz testing for:
 
 * [elm-syntax](https://github.com/folq/elm-syntax)
 * [haskell-to-elm](https://github.com/folq/haskell-to-elm)
-* [servant-elm-bidirectional](https://github.com/servant-elm-bidirectional)
+* [servant-to-elm](https://github.com/servant-to-elm)
 
 # Usage
 
