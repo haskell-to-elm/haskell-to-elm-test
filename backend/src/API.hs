@@ -91,21 +91,17 @@ instance QuickCheck.Arbitrary ADT where
 instance SOP.Generic ADT
 instance HasDatatypeInfo ADT
 
-instance HasElmDefinition ADT where
-  elmDefinition =
-    deriveElmTypeDefinition @ADT defaultOptions "ADT.ADT"
-
-instance HasElmDecoderDefinition Aeson.Value ADT where
-  elmDecoderDefinition =
-    deriveElmJSONDecoder @ADT defaultOptions Aeson.defaultOptions "ADT.decode"
-
-instance HasElmEncoderDefinition Aeson.Value ADT where
-  elmEncoderDefinition =
-    deriveElmJSONEncoder @ADT defaultOptions Aeson.defaultOptions "ADT.encode"
-
 instance HasElmType ADT where
-instance HasElmEncoder Aeson.Value ADT where
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @ADT defaultOptions "ADT.ADT"
+
 instance HasElmDecoder Aeson.Value ADT where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @ADT defaultOptions Aeson.defaultOptions "ADT.decode"
+
+instance HasElmEncoder Aeson.Value ADT where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @ADT defaultOptions Aeson.defaultOptions "ADT.encode"
 
 Aeson.deriveJSON Aeson.defaultOptions ''ADT
 
@@ -118,21 +114,17 @@ instance QuickCheck.Arbitrary EnumADT where
 instance SOP.Generic EnumADT
 instance HasDatatypeInfo EnumADT
 
-instance HasElmDefinition EnumADT where
-  elmDefinition =
-    deriveElmTypeDefinition @EnumADT defaultOptions "EnumADT.EnumADT"
-
-instance HasElmDecoderDefinition Aeson.Value EnumADT where
-  elmDecoderDefinition =
-    deriveElmJSONDecoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.decode"
-
-instance HasElmEncoderDefinition Aeson.Value EnumADT where
-  elmEncoderDefinition =
-    deriveElmJSONEncoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.encode"
-
 instance HasElmType EnumADT where
-instance HasElmEncoder Aeson.Value EnumADT where
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @EnumADT defaultOptions "EnumADT.EnumADT"
+
 instance HasElmDecoder Aeson.Value EnumADT where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.decode"
+
+instance HasElmEncoder Aeson.Value EnumADT where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.encode"
 
 Aeson.deriveJSON Aeson.defaultOptions ''EnumADT
 
@@ -145,21 +137,17 @@ instance QuickCheck.Arbitrary Record where
 instance SOP.Generic Record
 instance HasDatatypeInfo Record
 
-instance HasElmDefinition Record where
-  elmDefinition =
-    deriveElmTypeDefinition @Record defaultOptions { fieldLabelModifier = drop 1 } "Record.Record"
-
-instance HasElmDecoderDefinition Aeson.Value Record where
-  elmDecoderDefinition =
-    deriveElmJSONDecoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.decode"
-
-instance HasElmEncoderDefinition Aeson.Value Record where
-  elmEncoderDefinition =
-    deriveElmJSONEncoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.encode"
-
 instance HasElmType Record where
-instance HasElmDecoder Aeson.Value Record
-instance HasElmEncoder Aeson.Value Record
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @Record defaultOptions { fieldLabelModifier = drop 1 } "Record.Record"
+
+instance HasElmDecoder Aeson.Value Record where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.decode"
+
+instance HasElmEncoder Aeson.Value Record where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.encode"
 
 Aeson.deriveJSON Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } ''Record
 
@@ -172,21 +160,17 @@ instance QuickCheck.Arbitrary SingleConstructor where
 instance SOP.Generic SingleConstructor
 instance HasDatatypeInfo SingleConstructor
 
-instance HasElmDefinition SingleConstructor where
-  elmDefinition =
-    deriveElmTypeDefinition @SingleConstructor defaultOptions "SingleConstructor.SingleConstructor"
-
-instance HasElmDecoderDefinition Aeson.Value SingleConstructor where
-  elmDecoderDefinition =
-    deriveElmJSONDecoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.decode"
-
-instance HasElmEncoderDefinition Aeson.Value SingleConstructor where
-  elmEncoderDefinition =
-    deriveElmJSONEncoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.encode"
-
 instance HasElmType SingleConstructor where
-instance HasElmDecoder Aeson.Value SingleConstructor
-instance HasElmEncoder Aeson.Value SingleConstructor
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @SingleConstructor defaultOptions "SingleConstructor.SingleConstructor"
+
+instance HasElmDecoder Aeson.Value SingleConstructor where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.decode"
+
+instance HasElmEncoder Aeson.Value SingleConstructor where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.encode"
 
 Aeson.deriveJSON Aeson.defaultOptions ''SingleConstructor
 
@@ -199,26 +183,21 @@ instance QuickCheck.Arbitrary SingleFieldRecord where
 instance SOP.Generic SingleFieldRecord
 instance HasDatatypeInfo SingleFieldRecord
 
-instance HasElmDefinition SingleFieldRecord where
-  elmDefinition =
-    deriveElmTypeDefinition @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } "SingleFieldRecord.SingleFieldRecord"
-
-instance HasElmDecoderDefinition Aeson.Value SingleFieldRecord where
-  elmDecoderDefinition =
-    deriveElmJSONDecoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.decode"
-
-instance HasElmEncoderDefinition Aeson.Value SingleFieldRecord where
-  elmEncoderDefinition =
-    deriveElmJSONEncoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.encode"
-
 instance HasElmType SingleFieldRecord where
-instance HasElmDecoder Aeson.Value SingleFieldRecord
-instance HasElmEncoder Aeson.Value SingleFieldRecord
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } "SingleFieldRecord.SingleFieldRecord"
+
+instance HasElmDecoder Aeson.Value SingleFieldRecord where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.decode"
+
+instance HasElmEncoder Aeson.Value SingleFieldRecord where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.encode"
 
 Aeson.deriveJSON Aeson.defaultOptions ''SingleFieldRecord
 
 ---- NestedADT ----
-
 
 instance QuickCheck.Arbitrary NestedADT where
   arbitrary =
@@ -227,20 +206,16 @@ instance QuickCheck.Arbitrary NestedADT where
 instance SOP.Generic NestedADT
 instance HasDatatypeInfo NestedADT
 
-instance HasElmDefinition NestedADT where
-  elmDefinition =
-    deriveElmTypeDefinition @NestedADT defaultOptions { fieldLabelModifier = drop 1 } "NestedADT.NestedADT"
-
-instance HasElmDecoderDefinition Aeson.Value NestedADT where
-  elmDecoderDefinition =
-    deriveElmJSONDecoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.decode"
-
-instance HasElmEncoderDefinition Aeson.Value NestedADT where
-  elmEncoderDefinition =
-    deriveElmJSONEncoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.encode"
-
 instance HasElmType NestedADT where
-instance HasElmDecoder Aeson.Value NestedADT
-instance HasElmEncoder Aeson.Value NestedADT
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @NestedADT defaultOptions { fieldLabelModifier = drop 1 } "NestedADT.NestedADT"
+
+instance HasElmDecoder Aeson.Value NestedADT where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.decode"
+
+instance HasElmEncoder Aeson.Value NestedADT where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.encode"
 
 Aeson.deriveJSON Aeson.defaultOptions ''NestedADT
