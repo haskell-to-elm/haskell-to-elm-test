@@ -22,6 +22,8 @@ import Generics.SOP as SOP
 import qualified GHC.Generics as GHC
 import Language.Haskell.To.Elm
 import Servant.API
+import Servant.Multipart (MultipartForm, MultipartData)
+import qualified Servant.Multipart as Multipart
 import qualified Test.QuickCheck as QuickCheck
 import Test.QuickCheck.Instances.Text ()
 
@@ -59,6 +61,7 @@ type ServantFeatureAPI
  :<|> "capture" :> Capture "id" Int :> DeleteNoContent '[JSON] NoContent
  :<|> "captures" :> CaptureAll "ids" Int :> Get '[JSON] [Int]
  :<|> "static" :> "url" :> Get '[JSON] [Int]
+ :<|> "multipartform" :> MultipartForm Multipart.Tmp (MultipartData Multipart.Tmp) :> PostNoContent '[JSON] NoContent
 
 ---- Types ----
 

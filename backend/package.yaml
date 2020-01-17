@@ -48,8 +48,9 @@ dependencies:
 - haskell-to-elm
 - protolude
 - servant
-- servant-to-elm
+- servant-multipart
 - servant-server
+- servant-to-elm
 - text
 - time
 - unordered-containers
