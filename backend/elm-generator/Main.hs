@@ -9,6 +9,7 @@ import Protolude hiding ((<.>), moduleName)
 import qualified Data.HashMap.Lazy as HashMap
 import qualified Data.Text as Text
 import qualified Language.Elm.Pretty as Pretty
+import qualified Language.Elm.Simplification as Simplification
 import Language.Haskell.To.Elm
 import Servant.To.Elm
 import System.Directory
@@ -36,7 +37,8 @@ main = do
   where
     modules =
       HashMap.toList $
-      Pretty.modules $ map (elmEndpointDefinition "Config.api" ["Api"]) (elmEndpoints @API) <>
+      Pretty.modules $ fmap Simplification.simplifyDefinition $
+        map (elmEndpointDefinition "Config.api" ["Api"]) (elmEndpoints @API) <>
         mconcat
           [ jsonDefinitions @ADT
           , jsonDefinitions @EnumADT
