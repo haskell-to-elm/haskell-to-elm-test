@@ -1,9 +1,11 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
@@ -20,6 +22,8 @@ import Data.Time
 import Generic.Random (genericArbitraryU)
 import Generics.SOP as SOP
 import qualified GHC.Generics as GHC
+import qualified Language.Elm.Expression as Expression
+import qualified Language.Elm.Type as Type
 import Language.Haskell.To.Elm
 import Servant.API
 import Servant.Multipart (MultipartForm, MultipartData)
@@ -50,6 +54,10 @@ type RoundtripAPI
   :<|> "roundtrip" :> "singlefieldrecord" :> RoundTrip SingleFieldRecord
   :<|> "arbitrary" :> "nestedadts" :> Get '[JSON] [NestedADT]
   :<|> "roundtrip" :> "nestedadt" :> RoundTrip NestedADT
+  :<|> "arbitrary" :> "lists" :> Get '[JSON] [List Record]
+  :<|> "roundtrip" :> "list" :> RoundTrip (List Record)
+  :<|> "arbitrary" :> "pairs" :> Get '[JSON] [Pair SingleConstructor NestedADT]
+  :<|> "roundtrip" :> "pair" :> RoundTrip (Pair SingleConstructor NestedADT)
 
 type ServantFeatureAPI
     = "header" :> Header "header" Text :> QueryFlag "flag" :> Get '[JSON] Int
@@ -83,6 +91,12 @@ newtype SingleFieldRecord = SingleFieldRecord { _singleField :: Int }
 data NestedADT
   = FirstConstructor ADT [EnumADT]
   | SecondConstructor ADT [EnumADT]
+  deriving (GHC.Generic)
+
+data List a = Nil | Cons a (List a)
+  deriving (GHC.Generic)
+
+data Pair a b = Pair a b
   deriving (GHC.Generic)
 
 ---- ADT ----
@@ -222,3 +236,73 @@ instance HasElmEncoder Aeson.Value NestedADT where
     Just $ deriveElmJSONEncoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.encode"
 
 Aeson.deriveJSON Aeson.defaultOptions ''NestedADT
+
+---- List ----
+
+instance QuickCheck.Arbitrary a => QuickCheck.Arbitrary (List a) where
+  arbitrary =
+    genericArbitraryU
+
+instance SOP.Generic (List a)
+instance HasDatatypeInfo (List a)
+
+instance HasElmType List where
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @List defaultOptions "MyList.List"
+
+instance HasElmType a => HasElmType (List a) where
+  elmType =
+    Type.App (elmType @List) (elmType @a)
+
+instance HasElmDecoder Aeson.Value List where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @List defaultOptions Aeson.defaultOptions "MyList.decode"
+
+instance HasElmDecoder Aeson.Value a => HasElmDecoder Aeson.Value (List a) where
+  elmDecoder =
+    Expression.App (elmDecoder @Aeson.Value @List) (elmDecoder @Aeson.Value @a)
+
+instance HasElmEncoder Aeson.Value List where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @List defaultOptions Aeson.defaultOptions "MyList.encode"
+
+instance HasElmEncoder Aeson.Value a => HasElmEncoder Aeson.Value (List a) where
+  elmEncoder =
+    Expression.App (elmEncoder @Aeson.Value @List) (elmEncoder @Aeson.Value @a)
+
+Aeson.deriveJSON Aeson.defaultOptions ''List
+
+---- Pair ----
+
+instance (QuickCheck.Arbitrary a, QuickCheck.Arbitrary b) => QuickCheck.Arbitrary (Pair a b) where
+  arbitrary =
+    genericArbitraryU
+
+instance SOP.Generic (Pair a b)
+instance HasDatatypeInfo (Pair a b)
+
+instance HasElmType Pair where
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @Pair defaultOptions "MyPair.Pair"
+
+instance (HasElmType a, HasElmType b) => HasElmType (Pair a b) where
+  elmType =
+    Type.apps (elmType @Pair) [elmType @a, elmType @b]
+
+instance HasElmDecoder Aeson.Value Pair where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @Pair defaultOptions Aeson.defaultOptions "MyPair.decode"
+
+instance (HasElmDecoder Aeson.Value a, HasElmDecoder Aeson.Value b) => HasElmDecoder Aeson.Value (Pair a b) where
+  elmDecoder =
+    Expression.apps (elmDecoder @Aeson.Value @Pair) [elmDecoder @Aeson.Value @a, elmDecoder @Aeson.Value @b]
+
+instance HasElmEncoder Aeson.Value Pair where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @Pair defaultOptions Aeson.defaultOptions "MyPair.encode"
+
+instance (HasElmEncoder Aeson.Value a, HasElmEncoder Aeson.Value b) => HasElmEncoder Aeson.Value (Pair a b) where
+  elmEncoder =
+    Expression.apps (elmEncoder @Aeson.Value @Pair) [elmEncoder @Aeson.Value @a, elmEncoder @Aeson.Value @b]
+
+Aeson.deriveJSON Aeson.defaultOptions ''Pair

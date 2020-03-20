@@ -46,4 +46,6 @@ main = do
           , jsonDefinitions @SingleConstructor
           , jsonDefinitions @SingleFieldRecord
           , jsonDefinitions @NestedADT
+          , jsonDefinitions @List
+          , jsonDefinitions @Pair
           ]
