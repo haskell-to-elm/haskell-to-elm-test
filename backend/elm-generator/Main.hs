@@ -48,4 +48,5 @@ main = do
           , jsonDefinitions @NestedADT
           , jsonDefinitions @List
           , jsonDefinitions @Pair
+          , jsonDefinitions @DataRecord
           ]

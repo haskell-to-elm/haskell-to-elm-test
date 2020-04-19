@@ -10,6 +10,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeSynonymInstances #-}
+{-# OPTIONS_GHC -Wno-partial-fields #-}
 
 module API where
 
@@ -58,6 +59,8 @@ type RoundtripAPI
   :<|> "roundtrip" :> "list" :> RoundTrip (List Record)
   :<|> "arbitrary" :> "pairs" :> Get '[JSON] [Pair SingleConstructor NestedADT]
   :<|> "roundtrip" :> "pair" :> RoundTrip (Pair SingleConstructor NestedADT)
+  :<|> "arbitrary" :> "datarecords" :> Get '[JSON] [DataRecord]
+  :<|> "roundtrip" :> "datarecord" :> RoundTrip DataRecord
 
 type ServantFeatureAPI
     = "header" :> Header "header" Text :> QueryFlag "flag" :> Get '[JSON] Int
@@ -98,6 +101,12 @@ data List a = Nil | Cons a (List a)
 
 data Pair a b = Pair a b
   deriving (GHC.Generic)
+
+data DataRecord
+  = RecordConstructor { name :: Text, age :: Int }
+  | OtherConstructor
+  deriving (GHC.Generic)
+
 
 ---- ADT ----
 
@@ -306,3 +315,26 @@ instance (HasElmEncoder Aeson.Value a, HasElmEncoder Aeson.Value b) => HasElmEnc
     Expression.apps (elmEncoder @Aeson.Value @Pair) [elmEncoder @Aeson.Value @a, elmEncoder @Aeson.Value @b]
 
 Aeson.deriveJSON Aeson.defaultOptions ''Pair
+
+---- DataRecord ----
+
+instance QuickCheck.Arbitrary DataRecord where
+  arbitrary =
+    genericArbitraryU
+
+instance SOP.Generic DataRecord
+instance HasDatatypeInfo DataRecord
+
+instance HasElmType DataRecord where
+  elmDefinition =
+    Just $ deriveElmTypeDefinition @DataRecord defaultOptions "DataRecord.DataRecord"
+
+instance HasElmDecoder Aeson.Value DataRecord where
+  elmDecoderDefinition =
+    Just $ deriveElmJSONDecoder @DataRecord defaultOptions Aeson.defaultOptions "DataRecord.decode"
+
+instance HasElmEncoder Aeson.Value DataRecord where
+  elmEncoderDefinition =
+    Just $ deriveElmJSONEncoder @DataRecord defaultOptions Aeson.defaultOptions "DataRecord.encode"
+
+Aeson.deriveJSON Aeson.defaultOptions ''DataRecord
