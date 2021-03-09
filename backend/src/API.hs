@@ -32,6 +32,8 @@ import qualified Servant.Multipart as Multipart
 import qualified Test.QuickCheck as QuickCheck
 import Test.QuickCheck.Instances.Text ()
 
+import AesonOptions (aesonOptions)
+
 type RoundTrip a = ReqBody '[JSON] a :> Post '[JSON] a
 
 type API = RoundtripAPI :<|> ServantFeatureAPI
@@ -123,13 +125,13 @@ instance HasElmType ADT where
 
 instance HasElmDecoder Aeson.Value ADT where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @ADT defaultOptions Aeson.defaultOptions "ADT.decode"
+    Just $ deriveElmJSONDecoder @ADT defaultOptions aesonOptions "ADT.decode"
 
 instance HasElmEncoder Aeson.Value ADT where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @ADT defaultOptions Aeson.defaultOptions "ADT.encode"
+    Just $ deriveElmJSONEncoder @ADT defaultOptions aesonOptions "ADT.encode"
 
-Aeson.deriveJSON Aeson.defaultOptions ''ADT
+Aeson.deriveJSON aesonOptions ''ADT
 
 ---- EnumADT ----
 
@@ -146,13 +148,13 @@ instance HasElmType EnumADT where
 
 instance HasElmDecoder Aeson.Value EnumADT where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.decode"
+    Just $ deriveElmJSONDecoder @EnumADT defaultOptions aesonOptions "EnumADT.decode"
 
 instance HasElmEncoder Aeson.Value EnumADT where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @EnumADT defaultOptions Aeson.defaultOptions "EnumADT.encode"
+    Just $ deriveElmJSONEncoder @EnumADT defaultOptions aesonOptions "EnumADT.encode"
 
-Aeson.deriveJSON Aeson.defaultOptions ''EnumADT
+Aeson.deriveJSON aesonOptions ''EnumADT
 
 ---- Record ----
 
@@ -169,13 +171,13 @@ instance HasElmType Record where
 
 instance HasElmDecoder Aeson.Value Record where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.decode"
+    Just $ deriveElmJSONDecoder @Record defaultOptions { fieldLabelModifier = drop 1 } aesonOptions { Aeson.fieldLabelModifier = drop 1 } "Record.decode"
 
 instance HasElmEncoder Aeson.Value Record where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @Record defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } "Record.encode"
+    Just $ deriveElmJSONEncoder @Record defaultOptions { fieldLabelModifier = drop 1 } aesonOptions { Aeson.fieldLabelModifier = drop 1 } "Record.encode"
 
-Aeson.deriveJSON Aeson.defaultOptions { Aeson.fieldLabelModifier = drop 1 } ''Record
+Aeson.deriveJSON aesonOptions { Aeson.fieldLabelModifier = drop 1 } ''Record
 
 ---- SingleConstructor ----
 
@@ -192,13 +194,13 @@ instance HasElmType SingleConstructor where
 
 instance HasElmDecoder Aeson.Value SingleConstructor where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.decode"
+    Just $ deriveElmJSONDecoder @SingleConstructor defaultOptions aesonOptions "SingleConstructor.decode"
 
 instance HasElmEncoder Aeson.Value SingleConstructor where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @SingleConstructor defaultOptions Aeson.defaultOptions "SingleConstructor.encode"
+    Just $ deriveElmJSONEncoder @SingleConstructor defaultOptions aesonOptions "SingleConstructor.encode"
 
-Aeson.deriveJSON Aeson.defaultOptions ''SingleConstructor
+Aeson.deriveJSON aesonOptions ''SingleConstructor
 
 ---- SingleFieldRecord ----
 
@@ -215,13 +217,13 @@ instance HasElmType SingleFieldRecord where
 
 instance HasElmDecoder Aeson.Value SingleFieldRecord where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.decode"
+    Just $ deriveElmJSONDecoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } aesonOptions "SingleFieldRecord.decode"
 
 instance HasElmEncoder Aeson.Value SingleFieldRecord where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "SingleFieldRecord.encode"
+    Just $ deriveElmJSONEncoder @SingleFieldRecord defaultOptions { fieldLabelModifier = drop 1 } aesonOptions "SingleFieldRecord.encode"
 
-Aeson.deriveJSON Aeson.defaultOptions ''SingleFieldRecord
+Aeson.deriveJSON aesonOptions ''SingleFieldRecord
 
 ---- NestedADT ----
 
@@ -238,13 +240,13 @@ instance HasElmType NestedADT where
 
 instance HasElmDecoder Aeson.Value NestedADT where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.decode"
+    Just $ deriveElmJSONDecoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } aesonOptions "NestedADT.decode"
 
 instance HasElmEncoder Aeson.Value NestedADT where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } Aeson.defaultOptions "NestedADT.encode"
+    Just $ deriveElmJSONEncoder @NestedADT defaultOptions { fieldLabelModifier = drop 1 } aesonOptions "NestedADT.encode"
 
-Aeson.deriveJSON Aeson.defaultOptions ''NestedADT
+Aeson.deriveJSON aesonOptions ''NestedADT
 
 ---- List ----
 
@@ -265,7 +267,7 @@ instance HasElmType a => HasElmType (List a) where
 
 instance HasElmDecoder Aeson.Value List where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @List defaultOptions Aeson.defaultOptions "MyList.decode"
+    Just $ deriveElmJSONDecoder @List defaultOptions aesonOptions "MyList.decode"
 
 instance HasElmDecoder Aeson.Value a => HasElmDecoder Aeson.Value (List a) where
   elmDecoder =
@@ -273,13 +275,13 @@ instance HasElmDecoder Aeson.Value a => HasElmDecoder Aeson.Value (List a) where
 
 instance HasElmEncoder Aeson.Value List where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @List defaultOptions Aeson.defaultOptions "MyList.encode"
+    Just $ deriveElmJSONEncoder @List defaultOptions aesonOptions "MyList.encode"
 
 instance HasElmEncoder Aeson.Value a => HasElmEncoder Aeson.Value (List a) where
   elmEncoder =
     Expression.App (elmEncoder @Aeson.Value @List) (elmEncoder @Aeson.Value @a)
 
-Aeson.deriveJSON Aeson.defaultOptions ''List
+Aeson.deriveJSON aesonOptions ''List
 
 ---- Pair ----
 
@@ -300,7 +302,7 @@ instance (HasElmType a, HasElmType b) => HasElmType (Pair a b) where
 
 instance HasElmDecoder Aeson.Value Pair where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @Pair defaultOptions Aeson.defaultOptions "MyPair.decode"
+    Just $ deriveElmJSONDecoder @Pair defaultOptions aesonOptions "MyPair.decode"
 
 instance (HasElmDecoder Aeson.Value a, HasElmDecoder Aeson.Value b) => HasElmDecoder Aeson.Value (Pair a b) where
   elmDecoder =
@@ -308,13 +310,13 @@ instance (HasElmDecoder Aeson.Value a, HasElmDecoder Aeson.Value b) => HasElmDec
 
 instance HasElmEncoder Aeson.Value Pair where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @Pair defaultOptions Aeson.defaultOptions "MyPair.encode"
+    Just $ deriveElmJSONEncoder @Pair defaultOptions aesonOptions "MyPair.encode"
 
 instance (HasElmEncoder Aeson.Value a, HasElmEncoder Aeson.Value b) => HasElmEncoder Aeson.Value (Pair a b) where
   elmEncoder =
     Expression.apps (elmEncoder @Aeson.Value @Pair) [elmEncoder @Aeson.Value @a, elmEncoder @Aeson.Value @b]
 
-Aeson.deriveJSON Aeson.defaultOptions ''Pair
+Aeson.deriveJSON aesonOptions ''Pair
 
 ---- DataRecord ----
 
@@ -331,10 +333,10 @@ instance HasElmType DataRecord where
 
 instance HasElmDecoder Aeson.Value DataRecord where
   elmDecoderDefinition =
-    Just $ deriveElmJSONDecoder @DataRecord defaultOptions Aeson.defaultOptions "DataRecord.decode"
+    Just $ deriveElmJSONDecoder @DataRecord defaultOptions aesonOptions "DataRecord.decode"
 
 instance HasElmEncoder Aeson.Value DataRecord where
   elmEncoderDefinition =
-    Just $ deriveElmJSONEncoder @DataRecord defaultOptions Aeson.defaultOptions "DataRecord.encode"
+    Just $ deriveElmJSONEncoder @DataRecord defaultOptions aesonOptions "DataRecord.encode"
 
-Aeson.deriveJSON Aeson.defaultOptions ''DataRecord
+Aeson.deriveJSON aesonOptions ''DataRecord

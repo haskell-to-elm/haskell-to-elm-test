@@ -14,10 +14,13 @@ import Test.QuickCheck.Instances.Text ()
 
 import Orphans ()
 import API
+import AesonOptions (aesonOptions)
 
 main :: IO ()
 main = do
   putText "Starting server on port 8081"
+  putText "Using the following Aeson options: "
+  print aesonOptions
   run 8081 $
     logStdout $
     cors
