@@ -1,7 +1,7 @@
 .PHONY: run-backend
 run-backend:
 	cd backend \
-	  && stack build :backend-exe \
+	  && stack build --fast :backend-exe \
 	  && stack exec -- backend-exe
 
 .PHONY: run-frontend
@@ -13,7 +13,7 @@ run-frontend: generate-client-library frontend/node_modules
 .PHONY: generate-client-library
 generate-client-library:
 	cd backend \
-	  && stack build :elm-generator \
+	  && stack build --fast :elm-generator \
 	  && stack exec -- elm-generator ../frontend/generated_src/
 
 frontend/node_modules: frontend/package.json frontend/yarn.lock
