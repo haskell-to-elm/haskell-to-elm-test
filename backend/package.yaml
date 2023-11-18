@@ -1,6 +1,6 @@
 name:                backend
 version:             0.1.0.0
-github:              "folq/haskell-to-elm-test/backend"
+github:              "haskell-to-elm/haskell-to-elm-test/backend"
 license:             BSD3
 author:              "Olle Fredriksson"
 maintainer:          "fredriksson.olle@gmail.com"
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/folq/haskell-to-elm-test/backend#readme>
+description:         Please see the README on GitHub at <https://github.com/haskell-to-elm/haskell-to-elm-test/backend#readme>
 
 ghc-options:
   - -Wall

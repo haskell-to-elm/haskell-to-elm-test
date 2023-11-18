@@ -2,9 +2,9 @@
 
 End-to-end fuzz testing for:
 
-* [elm-syntax](https://github.com/folq/elm-syntax)
-* [haskell-to-elm](https://github.com/folq/haskell-to-elm)
-* [servant-to-elm](https://github.com/folq/servant-to-elm)
+* [elm-syntax](https://github.com/haskell-to-elm/elm-syntax)
+* [haskell-to-elm](https://github.com/haskell-to-elm/haskell-to-elm)
+* [servant-to-elm](https://github.com/haskell-to-elm/servant-to-elm)
 
 # Usage
 
